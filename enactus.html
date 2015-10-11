@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style type="text/css">
+    .line {
+      fill: none;
+      stroke: black;
+      stroke-width: 1.5px;
+      opacity: 0.4;
+}
+
+    .text {
+        font-size:8pt;
+        font-family:sans-serif;
+}
+    .circle {
+      fill: #FF9147;
+      stroke: #FF9147;
+      stroke-width: 0.5px;
+      opacity: 1;
+}
+    .tooltip {
+        font-size: 11pt;
+        font-family:sans-serif;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+}
+    .dividers {
+        fill: black;
+        opacity: 0.4;
+        stroke: black;
+        stroke-width: 0.2px;
+    }
+
+</style>
+<html>
+<body>
+<svg width = "900px" height = "900px"></svg>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript">
+
+    var start = 0;
+    var end = 400;
+    var svg = d3.select("svg");
+    var line1 = d3.svg.line.radial() ([[start,(Math.PI*2/3)],[end, (Math.PI*2/3)]]);
+    var line2 = d3.svg.line.radial() ([[start,(Math.PI*4/3)],[end, (Math.PI*4/3)]]);
+    var line3 = d3.svg.line.radial() ([[start,start],[end, start]]);
+    var sliceProj = 350/3;
+    var sliceEquipe = 350/8;
+    var sliceInterna = 350/6;
+    var numbers = [];
+
+    //como retornar a posição x ou y do circle?
+    //ideia: usar a posição para criar uma linha, com um ângulo pré-definido
+    //e tamanho que será definido pelo elemento de posição i, 1/2 do vetor de vetores
+    //numbers
+
+    var data = [
+        {
+            "name":"Pedro Câmara",
+            "projetos":"Repetóleo",
+            "internas":"Inovação"
+        },
+        {
+            "name":"Fabiana Ferreira",
+            "internas":"Qualidade",
+            "equipes":"Citros"
+        },
+        {
+            "name": "Sabrina Guedes",
+            "internas": "Qualidade",
+            "projetos": "Canoas de Pano"
+        },
+
+        {
+            "name": "Gabriela Ventura",
+            "internas": "GP",
+            "equipes": "Caju"
+        },
+        {
+        	"name": "João Eduardo",
+        	"internas": "Adm-Fin",
+            "projetos": "Repetóleo"
+        },
+        {
+        	"name": "Patrícia Telles",
+        	"equipes": "Caju",
+        	"projetos": "Repetóleo"
+        },
+        {
+        	 "name": "Matheus de Carvalho",
+        	 "internas": "Inovação",
+        	 "projetos": "Repetóleo"
+        },
+        {
+	"name": "Daniella Licurgo",
+	"internas": "GP",
+	"equipes": "Citros"
+        },
+        {
+	"name": "Carolina Vianna",
+	"internas": "Qualidade",
+	"equipes": "Citros"
+        },
+        {
+	"name": "Gustavo Morais",
+	"equipes": "Caju",
+	"internas": "Marketing"
+        },
+         {
+             "name": "Kaio Marroco",
+             "internas": "GP",
+             "equipes": "Visitação 1"
+        },
+        {
+            "name": "Luiz Carrez",
+            "internas": "GP",
+            "equipes": "Visitação 1"
+        },
+        {
+            "name": "Lucas Morais",
+            "internas": "Qualidade",
+            "equipes": "Visitação 1"
+        },
+        {
+            "name": "Gabriela Bauer",
+            "internas": "Qualidade",
+            "equipes": "Visitação 1"
+        },
+        {
+            "name": "Bruna Cardoso",
+            "internas": "Marketing",
+            "equipes": "Visitação 2"
+        },
+        {
+            "name": "Diego Oliveira",
+            "equipes": "Visitação 2",
+            "internas": "Marketing"
+        },
+        {
+            "name": "Rafaela Engler",
+            "equipes": "Visitação 2",
+            "internas": "Marketing"
+        },
+        {
+             "name": "Ana Beatriz",
+             "equipes": "Visitação 2",
+             "internas": "Qualidade"
+        },
+        {
+            "name": "José Henrique",
+            "projetos": "Canoas de Pano",
+            "equipes": "Visitação 3"
+        },
+        {
+            "name": "Vinícius Ferreira",
+            "internas": "Adm-Fin",
+            "equipes": "Visitação 3"
+        },
+        {
+             "name": "Carolina Kiss",
+             "internas": "GP",
+             "equipes": "Visitação 3"
+        },
+        {
+             "name": "Mateus Espanha",
+             "equipes": "Visitação 3",
+             "internas": "Inovação"
+        },
+        {
+	"name": "Pedro Ribeiro",
+	"internas": "Adm-Fin",
+	"equipes": "Visitação 4"
+        },
+        {
+            "name": "Luiza Rougemont",
+            "internas": "Marketing",
+            "equipes": "Visitação 4"
+        },
+        {
+             "name": "Gabriel Anhaia",
+             "internas": "Marketing",
+             "equipes": "Visitação 4"
+        },
+        {
+            "name": "Vanderlei",
+            "projetos": "Canoas de Pano",
+            "internas": "Adm-Fin"
+        },
+        {
+            "name": "Ana Sofia",
+            "internas": "GP",
+            "equipes": "Caju"
+        },
+        {
+            "name": "Gabriel Bertassone",
+            "projetos": "Repetóleo",
+            "internas": "Adm-Fin"
+        },
+        {
+            "name": "Mateus Mendes",
+            "internas": "Marketing",
+            "equipes": "Caju"
+        },
+        {
+            "name": "Daniel Atkinson",
+            "internas": "Marketing",
+            "equipes": "Energia Renovável"
+        },
+        {
+            "name": "Rafael Santanna",
+            "internas": "Adm-Fin",
+            "equipes": "Energia Renovável"
+        },
+        {
+            "name": "Alex Rodrigo",
+            "internas": "Adm-Fin",
+            "equipes": "Energia Renovável"
+        },
+        {
+            "name": "Israel Machado",
+            "internas": "Qualidade",
+            "equipes": "Energia Renovável"
+        },
+        {
+            "name": "Mateus Sampaio",
+            "projetos": "Canoas de Pano"
+        },
+        {
+            "name": "Anna Medinacelli",
+            "projetos": "Repetóleo"
+        },
+        {
+            "name": "Miguel Zorbaran",
+            "projetos": "Repetóleo"
+        }
+        ];
+
+    var internas = [
+        {
+            "name": "Adm-Fin",
+            "number": 1
+
+        },
+        {
+            "name": "Inovação",
+            "number": 2
+        },
+        {
+            "name": "GP",
+            "number": 3
+        },
+        {
+            "name": "Projetos",
+            "number": 4
+        },
+        {
+            "name": "Marketing",
+            "number":5
+        },
+        {
+            "name": "Qualidade",
+            "number": 6
+        }
+    ] ;
+
+    var projetos = [
+        {
+            "name": "Canoas de Pano",
+            "number": 1
+        },
+        {
+            "name": "Repetóleo",
+            "number":2
+        }
+    ] ;
+
+    var equipes = [
+        {
+            "name": "Caju",
+            "number": 1
+        },
+        {
+            "name": "Energia Renovável",
+            "number": 2
+        },
+        {
+            "name": "Citros",
+            "number": 3
+        },
+        {
+            "name": "Eletrônica",
+            "number":4
+        },
+        {
+            "name": "Visitação 1",
+            "number": 5
+        },
+        {
+            "name": "Visitação 2",
+            "number": 6
+        },
+        {
+            "name": "Visitação 3",
+            "number": 7
+        },
+        {
+            "name": "Visitação 4",
+            "number": 8
+        }
+    ];
+
+     var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .attr("class" , "tooltip");
+
+     var equipesLength = equipes.length;
+     var projetosLength = projetos.length;
+     var internasLength = internas.length;
+
+    //
+    //checa se a pessoa do data participa de equipes,
+    //se sim, retorna o index no vetor de equipes daquele
+    //que o membro participa
+    //
+    function findNumberOfEquipes (data, i) {
+        if (data[i].equipes)
+        {
+            for (j = 0 ; j < equipesLength ; j++)
+            {
+                if (equipes[j].name == data[i].equipes)
+                {
+                    return equipes[j].number;
+                    break;
+                }
+            }
+        }
+        else return 0;
+    };
+
+    //
+    //checa se a pessoa do data participa de projetos,
+    //se sim, retorna o index no vetor de projetos daquele
+    //que o membro participa
+    //
+    function findNumberOfProjetos (data,i) {
+        if (data[i].projetos)
+        {
+            for (j = 0 ; j < projetosLength ; j++)
+            {
+                if (projetos[j].name == data[i].projetos)
+                {
+                     return projetos[j].number;
+                     break;
+                }
+            }
+        }
+        else return 0;
+    };
+
+    //
+    //checa se a pessoa do data participa de internas,
+    //se sim, retorna o index no vetor de internas daquele
+    //que o membro participa
+    //
+    function findNumberOfInternas (data,i) {
+        if (data[i].internas)
+        {
+            for (j = 0 ; j < internasLength ; j++)
+            {
+                if (internas[j].name == data[i].internas)
+                {
+                    return internas[j].number;
+                    break;
+                }
+            }
+        }
+        else return 0;
+    };
+
+    //adicionar a possibilidade de a pessoa só ter uma função
+    function checkingSpots (datas, index) {
+        var tam = data.length;
+        var sum = 0;
+        //
+        // o for percorre todo o vetor de membros, de forma a checar se existe algum(ns)
+        // membro(s) que possui(em) as mesmas funções do d (dado a ser usado)
+        // se houver, acrescenta-se 1 à variável sum, que é usada para definir o
+        // raio do círculo, de acordo com a quantidade de membros naquela posição
+        //
+        for (var j = 0; j < tam ; j++) {
+                if (datas.projetos && datas.equipes) {
+                        if ((data[j].projetos === datas.projetos) && (data[j].equipes === datas.equipes))
+                            sum = sum + 1;
+                }
+                 else if  (datas.projetos && datas.internas) {
+                         if ((data[j].projetos === datas.projetos) && (data[j].internas === datas.internas))
+                            sum = sum + 1;
+                }
+                else if (datas.equipes && datas.internas) {
+                        if ((data[j].equipes === datas.equipes) && (data[j].internas === datas.internas))
+                            sum = sum + 1;
+                }
+                else if ((data[j].projetos) && (!(data[j].internas) && !(data[j].equipes))) {
+                    if ((datas.projetos) && (!(datas.internas) && !(datas.equipes))){
+                        if (data[j].projetos === datas.projetos) {
+                        sum = sum + 1;
+                        }
+                    }
+                }
+
+        };
+        return sum;
+    };
+    //adicionar a possibilidade de a pessoa só ter uma função
+    function checkingNames (datas, index) {
+        var tam = data.length;
+        var names = [];
+        for (var j = 0; j < tam ; j++) {
+                if (datas.projetos && datas.equipes) {
+                        if ((data[j].projetos === datas.projetos) && (data[j].equipes === datas.equipes))
+                            names.push(data[j].name);
+                }
+                 else if  (datas.projetos && datas.internas) {
+                         if ((data[j].projetos === datas.projetos) && (data[j].internas === datas.internas))
+                            names.push(data[j].name);
+                }
+                else if (datas.equipes && datas.internas) {
+                        if ((data[j].equipes === datas.equipes) && (data[j].internas === datas.internas))
+                            names.push(data[j].name);
+                }
+                else if ((data[j].projetos) && (!(data[j].internas) && !(data[j].equipes))) {
+                    if ((datas.projetos) && (!(datas.internas) && !(datas.equipes))){
+                        if (data[j].projetos === datas.projetos) {
+                        names.push(data[j].name);
+                        }
+                    }
+                }
+        };
+        return names;
+    };
+
+     svg.append("path")
+        .attr("class", "line")
+        .attr("d", line1)
+        .attr("transform" , "translate(450,450)");
+
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", line2)
+        .attr("transform" , "translate(450,450)");
+
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", line3)
+        .attr("transform" , "translate(450,450)");
+
+       //drawing circles, which are the representation of each member
+       svg.selectAll("circle")
+             .data(data)
+             .enter()
+             .append("circle")
+             .attr("class" , "circle")
+	  .attr("r" , function (d, i) {
+                        sum = checkingSpots (d,i);
+                        if (sum === 1) {
+                            sum = 0;
+                            return 6.5;
+                        }
+                        else if (sum === 2){
+                            sum = 0;
+                            return 8.5;
+                        }
+                        else if (sum > 2){
+                            sum = 0;
+                            return 10.5;
+                        }
+                        })
+
+             .attr("transform" , "translate (450,450)")
+             .attr('cx', function (d,i) {
+                var theta = 0;
+                var a = 0;
+                var b= 0;
+                var r = 0;
+                var interna = 0;
+                var equipe = 0;
+                var projeto = 0;
+
+                if ((d.internas) && (d.equipes)) {
+                    interna = findNumberOfInternas(data,i);
+                    equipe = findNumberOfEquipes(data,i);
+                    a = sliceInterna*interna;
+                    b = sliceEquipe*equipe;
+                    r = Math.sqrt(b*b + a*a - 2*a*b*0.5);
+                    theta = Math.acos((- a*a + r*r + b*b)/(2*r*b));
+                    return r * Math.cos(theta + Math.PI/6);
+                }
+
+                else if ((d.internas) && (d.projetos)) {
+                    interna = findNumberOfInternas(data,i);
+                    projeto = findNumberOfProjetos(data,i);
+                    b = sliceInterna*interna;
+                    a = sliceProj*projeto;
+                    r = Math.sqrt(b*b + a*a - 2*a*b*0.5);
+                    theta = Math.acos((- a*a + r*r + b*b)/(2*r*b));
+                    return r * Math.cos(theta + Math.PI*5/6);
+                }
+
+                else if ((d.projetos) && (d.equipes)) {
+                    equipe = findNumberOfEquipes(data,i);
+                    projeto = findNumberOfProjetos(data,i);
+                    a = sliceEquipe*equipe;
+                    b = sliceProj*projeto;
+                    r = Math.sqrt(b*b + a*a - 2*a*b*0.5);
+                    theta = Math.acos((- a*a + r*r + b*b)/(2*r*b));
+                    return r * Math.cos(theta + Math.PI*3/2);
+                }
+
+                else if ((d.projetos) && (!(d.equipes) && !(d.internas))) {
+                    projeto = findNumberOfProjetos(data,i);
+                    r = sliceProj*projeto;
+                    return r*Math.cos(Math.PI*3/2);
+                }
+
+                else if ((d.equipes) && (!(d.projetos) && !(d.internas))) {
+                    equipe = findNumberOfEquipes(data,i);
+                    r = sliceEquipe*equipe;
+                    return r*Math.cos(Math.PI/6);
+                }
+
+                else if ((d.internas) && (!(d.projetos) && !(d.equipes))) {
+                    interna = findNumberOfInternas(data,i);
+                    r = sliceInterna*interna;
+                    return r*Math.cos(Math.PI*5/6);
+                }
+
+            })
+             .attr('cy',  function (d,i) {
+                var theta = 0;
+                var a = 0;
+                var b= 0;
+                var r = 0;
+                var interna = 0;
+                var equipe = 0;
+                var projeto = 0;
+
+                if ((d.internas) && (d.equipes)) {
+                    interna = findNumberOfInternas(data,i);
+                    equipe = findNumberOfEquipes(data,i);
+                    a = sliceInterna*interna;
+                    b = sliceEquipe*equipe;
+                    r = Math.sqrt(b*b + a*a - 2*a*b*0.5);
+                    theta = Math.acos((- a*a + r*r + b*b)/(2*r*b));
+                    numbers[i] = [interna,equipe];
+                    return r * Math.sin(theta + Math.PI/6);
+                }
+
+                else if ((d.internas) && (d.projetos)) {
+                    interna = findNumberOfInternas(data,i);
+                    projeto = findNumberOfProjetos(data,i);
+                    b = sliceInterna*interna;
+                    a = sliceProj*projeto;
+                    r = Math.sqrt(b*b + a*a - 2*a*b*0.5);
+                    theta = Math.acos((- a*a + r*r + b*b)/(2*r*b));
+                    numbers[i] = [interna,projeto];
+                    return r * Math.sin(theta + Math.PI*5/6);
+                }
+
+                else if ((d.projetos) && (d.equipes)) {
+                    equipe = findNumberOfEquipes(data,i);
+                    projeto = findNumberOfProjetos(data,i);
+                    a = sliceEquipe*equipe;
+                    b = sliceProj*projeto;
+                    r = Math.sqrt(b*b + a*a - 2*a*b*0.5);
+                    theta = Math.acos((- a*a + r*r + b*b)/(2*r*b));
+                    numbers[i] = [equipe,projeto];
+                    return r * Math.sin(theta + Math.PI*3/2);
+                }
+
+                else if ((d.projetos) && !((d.equipes) && !(d.internas))) {
+                    projeto = findNumberOfProjetos(data,i);
+                    r = sliceProj*projeto;
+                    return r*Math.sin(Math.PI*3/2);
+                }
+
+                else if ((d.equipes) && (!(d.projetos) && !(d.internas))) {
+                    equipe = findNumberOfEquipes(data,i);
+                    r = sliceEquipe*equipe;
+                    return r*Math.sin(Math.PI/6);
+                }
+
+                else if ((d.internas) && (!(d.projetos) && !(d.equipes))) {
+                    interna = findNumberOfInternas(data,i);
+                    r = sliceInterna*interna;
+                    return r*Math.sin(Math.PI*5/6);
+                }
+            })
+
+            .on("mouseover", function (d,i){
+                names = checkingNames(d,i);
+                //
+                // definindo as tooltips de acordo com a quantidade
+                // de círculos sobrepostos e exibindo os nomes
+                // de todos os membros que estão na determinada posição
+                //
+                tooltip.html( function () {
+                    var tam = names.length;
+                    var tooltip = "";
+                    for (var j = 0; j < tam; j++ ){
+                        tooltip = tooltip + "<br/>" + names[j] ;
+                    };
+                    return tooltip;
+                });
+                return tooltip.style("visibility", "visible")})
+            .on("mousemove", function (d,i){
+               names = checkingNames(d,i);
+                //
+                // definindo as tooltips de acordo com a quantidade
+                // de círculos sobrepostos e exibindo os nomes
+                // de todos os membros que estão na determinada posição
+                //
+                tooltip.html( function () {
+                    var tam = names.length;
+                    var tooltip = "";
+                    for (var j = 0; j < tam; j++ ){
+                        tooltip = tooltip + "<br/>" + names[j] ;
+                    };
+                    return tooltip;
+                });
+                return tooltip.style("top", (d3.event.pageY - 5)+"px").style("left",(d3.event.pageX  + 5)+"px");})
+            .on("mouseout", function(){
+                return tooltip.style("visibility", "hidden");});
+
+    //drawing lines and appending texts (axis and areas)
+
+
+   d3.select("svg")
+        .append("text")
+        .attr("class", "text")
+        .text("Projetos")
+        .attr("x", 428)
+        .attr("y", 45);
+
+    d3.select("svg")
+        .append("text")
+        .attr("class", "text")
+        .text("Áreas Internas")
+        .attr("x", 55)
+        .attr("y", 665);
+
+    d3.select("svg")
+        .append("text")
+        .attr("class", "text")
+        .text("Equipes")
+        .attr("x", 775)
+        .attr("y", 665);
+
+    //drawing axis dividers
+
+    svg.selectAll("circles")
+        .data(equipes)
+        .enter()
+        .append("circle")
+        .attr("transform" , "translate (450,450)")
+        .attr("class" , "dividers")
+        .attr("r" , 2)
+        .attr("cx" , function (d,i) {
+                r = sliceEquipe*d.number;
+                return r*Math.cos(Math.PI/6);
+        })
+        .attr("cy" , function (d,i) {
+                r = sliceEquipe*d.number;
+                return r*Math.sin(Math.PI/6)
+        });
+
+    svg.selectAll("circles")
+        .data(projetos)
+        .enter()
+        .append("circle")
+        .attr("transform" , "translate (450,450)")
+        .attr("class" , "dividers")
+        .attr("r" , 2)
+        .attr("cx" , function (d,i) {
+                r = sliceProj*d.number;
+                return r*Math.cos(Math.PI*3/2);
+        })
+        .attr("cy" , function (d,i) {
+                r = sliceProj*d.number;
+                return r*Math.sin(Math.PI*3/2)
+        });
+
+    svg.selectAll("circles")
+        .data(internas)
+        .enter()
+        .append("circle")
+        .attr("transform" , "translate (450,450)")
+        .attr("class" , "dividers")
+        .attr("r" , 2)
+        .attr("cx" , function (d,i) {
+                r = sliceInterna*d.number;
+                return r*Math.cos(Math.PI*5/6);
+        })
+        .attr("cy" , function (d,i) {
+                r = sliceInterna*d.number;
+                return r*Math.sin(Math.PI*5/6)
+        });
+
+        //fazer uma seleção dos circles da class dividers para
+        //colocar os nomes das subdivisões de cada um dos eixos
+
+</script>
+</body>
+</html>
